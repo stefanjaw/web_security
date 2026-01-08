@@ -6,14 +6,14 @@ from odoo.exceptions import ValidationError
 import logging
 _logging = _logger = logging.getLogger(__name__)
 
-class ResUsers(models.Model):
+class ResUsersInherited(models.Model):
     _inherit = 'res.users'
 
     BLOCK_MESSAGE = "Not Allowed"
     
     def _login(self, credential, user_agent_env):
         _logger.info(f"    ==== _login")
-        
+
         ip = request.httprequest.environ['REMOTE_ADDR']
         if self._is_ip_address_blocked(ip) == True:
             _logger.info(f"DEF19    ==== _login")

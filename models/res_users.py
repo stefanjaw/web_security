@@ -16,12 +16,13 @@ class ResUsers(models.Model):
         
         ip = request.httprequest.environ['REMOTE_ADDR']
         if self._is_ip_address_blocked(ip) == True:
+            _logger.info(f"DEF19    ==== _login")
             msg1 = f"{self.BLOCK_MESSAGE}"
             _logger.info(f"        ==== Blocking {ip}: {msg1}")
             raise ValidationError(f"{self.BLOCK_MESSAGE}")
         else:
             pass
-        
+        _logger.info(f"DEF25    ==== _login")        
         return super()._login(credential, user_agent_env)
     
     def _is_ip_address_blocked(self,ip_address):

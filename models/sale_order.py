@@ -6,8 +6,8 @@ from odoo.exceptions import ValidationError
 import logging
 _logging = _logger = logging.getLogger(__name__)
 
-class ResPartnerInherited(models.Model):
-    _inherit = 'res.partner'
+class SaleOrderInherited(models.Model):
+    _inherit = 'sale.order'
 
     BLOCK_MESSAGE = "Not Allowed record"
     

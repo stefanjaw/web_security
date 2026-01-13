@@ -14,11 +14,11 @@ class ResUsersInherited(models.Model):
     # def _login(self, credential, user_agent_env):
     #     _logger.info(f"    ==== _login")
 
-    #     ip = request.httprequest.environ['REMOTE_ADDR']
-    #     if self._is_ip_address_blocked(ip) == True:
+    #     ip_address = request.httprequest.environ['REMOTE_ADDR']
+    #     if self._is_ip_address_blocked(ip_address) == True:
     #         _logger.info(f"DEF19    ==== _login")
     #         msg1 = f"{self.BLOCK_MESSAGE}"
-    #         _logger.info(f"        ==== Blocking {ip}: {msg1}")
+    #         _logger.info(f"        ==== Blocking {ip_address}: {msg1}")
     #         raise ValidationError(f"{self.BLOCK_MESSAGE}")
     #     else:
     #         pass

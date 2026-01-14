@@ -25,7 +25,8 @@ Long description of module's purpose
         'views/views.xml',
         'views/templates.xml',
         'views/res_users_views.xml',
-        'views/website_sale.xml'
+        'views/website_sale.xml',
+        'views/res_config_settings.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

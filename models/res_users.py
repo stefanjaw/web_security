@@ -8,6 +8,8 @@ _logging = _logger = logging.getLogger(__name__)
 
 class ResUsersInherited(models.Model):
     _inherit = 'res.users'
+
+    email_verified = fields.Boolean(default=False)
     
     def _is_ip_address_blocked(self,ip_address):
         output = False

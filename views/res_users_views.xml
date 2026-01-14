@@ -1,8 +1,8 @@
 <odoo>
   <data>
     
-    <record model="ir.ui.view" id="web_security_res_users">
-      <field name="name">web_security list</field>
+    <record model="ir.ui.view" id="web_security_res_users_form">
+      <field name="name">Users web_security Form</field>
       <field name="model">res.users</field>
       <field name="inherit_id" ref="base.view_users_form"/> 
       <field name="arch" type="xml">
@@ -14,5 +14,20 @@
       </field>
     </record>
 
+    <record model="ir.ui.view" id="web_security_res_users_list">
+      <field name="name">Users web_security list</field>
+      <field name="model">res.users</field>
+      <field name="inherit_id" ref="base.view_users_search"/> 
+      <field name="arch" type="xml">
+        <xpath expr="//search" position="inside">
+            <separator/>
+            <filter name="email_verified" string="Email Verified" domain="[('email_verified', '=', True)]"/>
+            <group expand="0" string="Group By">
+                <filter name="email_verified" context="{'group_by': 'email_verified'}"/>
+            </group>       
+        </xpath>
+      </field>
+    </record>
+      
   </data>
 </odoo>

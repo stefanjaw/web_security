@@ -7,8 +7,8 @@ _logging = _logger = logging.getLogger(__name__)
 class ResConfigSettingsInherited(ResConfigSettings):
     _inherit = 'res.config.settings'
     
-    email_verification = fields.Boolean()
-    ip_address_verification = fields.Boolean()
+    email_verification = fields.Boolean(related="company_id.email_verification",readonly=False)
+    ip_address_verification = fields.Boolean(related="company_id.ip_address_verification",readonly=False)
 
     def open_ip_address_blocked(self):
         _logger.info(f"    ==== open_ip_address_blocked")

@@ -7,10 +7,13 @@ _logging = _logger = logging.getLogger(__name__)
 class AuthSignupHomeInherited(AuthSignupHome):
 
     def web_auth_reset_password(self, *args, **kw):
-        result = super().web_auth_reset_password(*args, **kw)
-        if request.session.uid in [None, False, ""]:
-            pass
-        else:
+        kw_token = kw.get('token')
+        kw_login = kw.get('login')
+        
+        if kw_token not in [None, False, ""] and kw_login not in [None, False, ""] :
             request.env.user.email_verified = True
             _logger.info(f"    ==== user_id: {request.env.user} {request.env.user.name} email_verified: {request.env.user.email_verified}")
-        return result
+        else:
+            pass
+        
+        return super().web_auth_reset_password(*args, **kw)

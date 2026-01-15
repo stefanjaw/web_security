@@ -40,3 +40,5 @@ class ResUsersInherited(models.Model):
             pass
         
         return output
+
+    

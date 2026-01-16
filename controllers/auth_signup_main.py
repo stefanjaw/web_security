@@ -51,8 +51,38 @@ class AuthSignupHomeInherited(AuthSignupHome):
                         'body_html': Markup( template_body_html_str )
                     })
         return
+
+    @http.route()
+    def web_login(self, *args, **kw):
+        _logger.info(f"    ==== web_login check token")
+        
+        try:
+            self._validate_url_token(kw)
+        except:
+            pass            
+        
+        return super().web_login(*args, **kw)
     
+    def _validate_url_token(self, kw):
+        login = kw['auth_login']
+        token = kw['token']
+        
+        user_ids = request.env['res.users'].sudo().search([
+            ('active', '=', True),
+            ('login', '=', login)
+        ])
+        
+        if len(user_ids) == 1 and token:
+            if user_ids.partner_id.signup_token == token:
+                _logger.info(f"    ==== web_login Email Verified")
+                user_ids.email_verified = True
+            else:
+                _logger.info(f"    ==== web_login Email Verification Failed")
+        
+        return
+        
     def web_auth_reset_password(self, *args, **kw):
+        _logger.info(f"DEF79 web_auth_reset_password")
         kw_token = kw.get('token')
         kw_login = kw.get('login')
         _logger.info(f"DEF12 kw_token: {kw_token} kw_login: {kw_login} ============")

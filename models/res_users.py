@@ -1,6 +1,8 @@
 from odoo import models, fields, api
 from odoo.http import request
 
+from odoo.addons.auth_signup.models.res_partner import random_token
+
 from odoo.exceptions import ValidationError
 
 import logging
@@ -41,4 +43,18 @@ class ResUsersInherited(models.Model):
         
         return output
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        _logger.info(f"    ==== create user generating token")
+        
+        user_ids = super().create(vals_list)
+        self._set_partner_id_signup_token( user_ids )
+        
+        return user_ids
     
+    def _set_partner_id_signup_token(self, user_ids):
+        for user_id in user_ids:
+            if user_id.signup_token in [None, False, ""]:
+                signup_token = random_token()
+                user_id.sudo().partner_id.signup_token = signup_token
+        return

@@ -35,24 +35,39 @@ class AuthSignupHomeInherited(AuthSignupHome):
         return response
 
     def _set_template_body_html_with_token(self):
+        _logger.info(f"    ==== _set_template_body_html_with_token")
         template_id = request.env.ref('auth_signup.mail_template_user_signup_account_created', raise_if_not_found=False)
         if len(template_id) == 1:
-            text_original = 'auth_login={{object.email}}" style='
-            text_new =      'auth_login={{object.email}}&token={{object.partner_id.signup_token}}" style='
-                        
+
+            text_start = '<div style="margin: 16px 0px 16px 0px;">'
+            text_end = 'Go to My Account'
+            text_stop = '<!-- Modified Text -->'
+            text_new = """<div style="margin: 16px 0px 16px 0px;"><!-- Modified Text -->
+            
+            <p style="margin:0px 0 16px 0;box-sizing:border-box;">Click the button "Go to My account" or Copy and paste the following URL into your browser:</p>
+            <pre style="margin:0px 0 16px 0;box-sizing:border-box;text-wrap-mode:wrap;white-space-collapse:preserve;color:#111827;overflow-y:auto;overflow-x:auto;unicode-bidi:bidi-override;direction:ltr;font-size:13px;background-color:#f4f4f4; padding:10px; border-radius:5px; font-family: monospace;" t-out="'%sweb/login?auth_login=%s&amp;token=%s' % (request.httprequest.url_root, object.email, object.partner_id.signup_token)"></pre>  
+            
+                                        <a t-attf-href="/web/login?auth_login={{object.email}}&amp;token={{object.partner_id.signup_token}}" style="box-sizing:border-box;background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                                            Go to My Account"""
+
             template_body_html = template_id.sudo().body_html
             template_body_html_str = str(template_body_html)
             
-            if text_original in template_body_html_str:
-                _logger.info(f"    ==== In Mail Template |{template_id.name}| replace\n\tFROM: |{text_original}|\n\tTO: |{text_new}|")
-                template_body_html_str = template_body_html_str.replace(
-                        text_original, text_new
-                    )
-                body_html = Markup( template_body_html_str )
+            start_index = template_body_html_str.find(text_start)
+            end_index = template_body_html_str.find(text_end)
+            stop_index = template_body_html_str.find(text_stop)
+            
+            if start_index != -1 and end_index != -1 and stop_index == -1:
+                _logger.info(f"    ==== Template Text Modified | {template_id.id}: {template_id.name}")
+                end_index += len(text_end)  # include text_end in replacement
+                template_body_html_str = template_body_html_str[:start_index] + text_new + template_body_html_str[end_index:]
+            
+            body_html = Markup( template_body_html_str )
 
-                template_id.sudo().write({
-                        'body_html': Markup( template_body_html_str )
-                    })
+            template_id.sudo().write({
+                    'body_html': Markup( template_body_html_str )
+                })
+        
         return
     
     @http.route()

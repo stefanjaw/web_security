@@ -26,9 +26,10 @@ class AuthSignupHomeInherited(AuthSignupHome):
         if len(user_id) == 1 and signup_token in [None,False,""]:
             user_id.sudo().partner_id.signup_token = signup_token
 
-        if len(user_id) == 1 and user_id.email_verified == False:
-            _logger.info(f"DEF25 user_id: {user_id} {user_id.name}")
-            return request.redirect('/web/session/logout?redirect=/web/check_email')
+        # Commented didn't save the guest orders
+        # if len(user_id) == 1 and user_id.email_verified == False:
+        #     _logger.info(f"DEF25 user_id: {user_id} {user_id.name}")
+        #     return request.redirect('/web/session/logout?redirect=/web/check_email')
         return response
 
     def _set_template_body_html_with_token(self):

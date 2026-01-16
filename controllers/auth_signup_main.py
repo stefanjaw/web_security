@@ -26,10 +26,12 @@ class AuthSignupHomeInherited(AuthSignupHome):
         if len(user_id) == 1 and signup_token in [None,False,""]:
             user_id.sudo().partner_id.signup_token = signup_token
 
-        # Commented didn't save the guest orders
-        # if len(user_id) == 1 and user_id.email_verified == False:
-        #     _logger.info(f"DEF25 user_id: {user_id} {user_id.name}")
-        #     return request.redirect('/web/session/logout?redirect=/web/check_email')
+        
+        if len(user_id) == 1 and user_id.email_verified == False:
+            # _logger.info(f"DEF25 user_id: {user_id} {user_id.name}")
+            # return request.redirect('/web/session/logout?redirect=/web/check_email') # Commented didn't save the guest orders
+            return request.redirect('/web/check_email')
+
         return response
 
     def _set_template_body_html_with_token(self):
@@ -84,6 +86,7 @@ class AuthSignupHomeInherited(AuthSignupHome):
         
     def web_auth_reset_password(self, *args, **kw):
         _logger.info(f"DEF79 web_auth_reset_password")
+        
         kw_token = kw.get('token')
         kw_login = kw.get('login')
         _logger.info(f"DEF12 kw_token: {kw_token} kw_login: {kw_login} ============")

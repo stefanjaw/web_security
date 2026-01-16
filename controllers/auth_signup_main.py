@@ -58,9 +58,13 @@ class AuthSignupHomeInherited(AuthSignupHome):
     @http.route()
     def web_login(self, *args, **kw):
         _logger.info(f"    ==== web_login check token")
+
+        redirect_if_logged_in = "/"
         
         try:
-            self._validate_url_token(kw)
+            result = self._validate_url_token(kw)
+            if result.get('redirect') == True and request.session.uid > 4: #4 Public User
+                return request.redirect( redirect_if_logged_in )
         except:
             pass            
         
@@ -79,11 +83,16 @@ class AuthSignupHomeInherited(AuthSignupHome):
             if user_ids.partner_id.signup_token == token:
                 _logger.info(f"    ==== web_login Email Verified")
                 user_ids.email_verified = True
+                user_ids.partner_id.write({
+                        "signup_token": False
+                    })
+                return {'redirect': True}
             else:
                 _logger.info(f"    ==== web_login Email Verification Failed")
         
-        return
-        
+        return {}
+
+    @http.route('/web/reset_password', type='http', auth='public', website=True, sitemap=False)
     def web_auth_reset_password(self, *args, **kw):
         _logger.info(f"DEF79 web_auth_reset_password")
         

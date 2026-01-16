@@ -10,7 +10,7 @@
                 <t t-if="request.env.user.email_verified == False and request.env.company.email_verification == True">
                     <div style="display: flex;">
                         <t t-if="request.env.user.id == 4">
-                            <a t-attf-href="/web/login?redirect=/web/login?redirect=/shop/payment" t-attf-class="#{_cta_classes} btn btn-primary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Login</a>
+                            <a t-attf-href="/web/login?redirect=/web/login?redirect=/shop/payment" t-attf-class="#{_cta_classes} btn btn-secondary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Sign in</a>
                         </t>
                         <t t-else="">
                             <a t-attf-href="/web/reset_password?login={{ request.env.user.login }}" t-attf-class="#{_cta_classes} btn btn-primary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Reset Password</a>

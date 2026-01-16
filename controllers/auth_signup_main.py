@@ -54,7 +54,7 @@ class AuthSignupHomeInherited(AuthSignupHome):
                         'body_html': Markup( template_body_html_str )
                     })
         return
-
+    
     @http.route()
     def web_login(self, *args, **kw):
         _logger.info(f"    ==== web_login check token")

@@ -66,7 +66,7 @@ class AuthSignupHomeInherited(AuthSignupHome):
             if result.get('redirect') == True and request.session.uid > 4: #4 Public User
                 return request.redirect( redirect_if_logged_in )
         except:
-            pass            
+            pass
         
         return super().web_login(*args, **kw)
     

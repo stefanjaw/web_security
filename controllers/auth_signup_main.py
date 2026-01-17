@@ -13,6 +13,7 @@ class AuthSignupHomeInherited(AuthSignupHome):
 
     @http.route('/web/signup', type='http', auth='public', website=True, sitemap=False)
     def web_auth_signup(self, *args, **kw):
+        _logger.info(f"    ==== /web/signup web_auth_signup ============")
         login = kw.get('login')
 
         self._set_template_body_html_with_token()
@@ -22,15 +23,14 @@ class AuthSignupHomeInherited(AuthSignupHome):
         user_id = request.env['res.users'].search([
                 ('login', '=', login)
             ])
-        signup_token = request.session.session_token
-        if len(user_id) == 1 and signup_token in [None,False,""]:
-            user_id.sudo().partner_id.signup_token = signup_token
-
+        # signup_token = request.session.session_token
+        # if len(user_id) == 1 and signup_token in [None,False,""]:
+        #     user_id.sudo().partner_id.signup_token = signup_token
         
-        if len(user_id) == 1 and user_id.email_verified == False:
-            # _logger.info(f"DEF25 user_id: {user_id} {user_id.name}")
-            # return request.redirect('/web/session/logout?redirect=/web/check_email') # Commented didn't save the guest orders
-            return request.redirect('/web/check_email')
+        # if len(user_id) == 1 and user_id.email_verified == False:
+        #     # _logger.info(f"DEF25 user_id: {user_id} {user_id.name}")
+        #     # return request.redirect('/web/session/logout?redirect=/web/check_email') # Commented didn't save the guest orders
+        #     return request.redirect('/web/check_email')
 
         return response
 

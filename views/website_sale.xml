@@ -6,14 +6,105 @@
             <field name="priority">98</field>
             <field name="inherit_id" ref="payment.submit_button"/>
             <field name="arch" type="xml">
-              <xpath expr="//button[@name='o_payment_submit_button']" position="before">
+
+                <xpath expr="//button[@name='o_payment_submit_button']" position="before">
                     <t t-if="request.env.user.email_verified == False and request.env.company.email_verification == True">
                         <div style="display: flex;">
                             <t t-if="request.env.user.id == 4">
-                                <a t-attf-href="/web/login?redirect=/web/login?redirect=/shop/payment" t-attf-class="#{_cta_classes} btn btn-secondary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Sign in</a>
+                                <a t-attf-href="/web/login?redirect=/web/login?redirect=/shop/payment"
+                                    t-attf-class="#{_cta_classes} btn btn-secondary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Sign in</a>
                             </t>
                             <t t-else="">
-                                <a t-attf-href="/web/reset_password?login={{ request.env.user.login }}" t-attf-class="#{_cta_classes} btn btn-secondary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Reset Password</a>
+                                <script>
+                                    window.addEventListener('load', function () {
+                                        console.log("===== Disabling button o_payment_submit_button");
+                                
+                                        const button = document.querySelector(
+                                            'button[name="o_payment_submit_button"]'
+                                        );
+                                        if (!button) return;
+                                
+                                        // Force initial state
+                                        button.disabled = true;
+                                
+                                        const observer = new MutationObserver(() => {
+                                            if (!button.disabled) {
+                                                console.log("===== Re-disabling payment button");
+                                                button.disabled = true;
+                                            }
+                                        });
+                                        
+                                        observer.observe(button, {
+                                            attributes: true,
+                                            attributeFilter: ['disabled']
+                                        });
+                                    });
+                                </script>
+
+                                <script>
+                                    let verify_email_action = "verify_email";
+                                    var paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
+                                    
+                                    function verifyEmail() {
+                                        console.log('testing0956');
+                                        
+                                        const formElement = document.getElementById('o_payment_form');
+                                        const verify_email_txt = document.getElementById('verify_email_txt');
+                                        const transactionRoute = formElement.getAttribute('data-transaction-route');
+                                        const url = window.location.origin + transactionRoute;
+                                        
+                                        const accessToken = formElement.getAttribute('data-access-token');
+                                        const csrf_token = odoo.csrf_token;
+                                        console.log("url: " + url + " transactionRoute: " + transactionRoute + " accessToken: " + accessToken + " csrf_token: " + csrf_token);
+                                        
+                                        let data = {
+                                          "id": 4,
+                                          "jsonrpc": "2.0",
+                                          "method": "call",
+                                          "params": {
+                                            "verify_email_action":verify_email_action,
+                                            "access_token": accessToken,
+                                            "csrf_token": csrf_token
+                                          }
+                                        };
+                                        console.log("data to send", data);
+                                        fetch(url, {
+                                          method: 'POST',
+                                          headers: {
+                                            'Content-Type': 'application/json'
+                                          },
+                                          body: JSON.stringify(data)
+                                        })
+                                        .then(response =&gt; response.json())
+                                        .then(result =&gt; {
+                                          if (result &amp;&amp; result.result &amp;&amp; result.result.error) {
+                                            console.error('Error from server:', result.result.error);
+                                          } else {
+                                            console.log('Success:', result);
+                                            const verify_email_btn = document.getElementById('verify_email');
+                                            if (verify_email_btn) {
+                                              console.log('Button found:', verify_email_btn);
+                                              verify_email_btn.textContent = result.result.btn_txt;
+                                              verify_email_txt.textContent = result.result.message;
+                                              // You can perform actions on the button here, for example:
+                                              // button.style.backgroundColor = 'yellow';
+                                              verify_email_action = result.result.verify_email_action
+                                              console.log('verify_email_action:' + verify_email_action);
+                                            } 
+                                          }
+                                        })
+                                        .catch(error =&gt; {
+                                          console.error('Error:', error);
+                                        });
+                                        
+
+
+                                    }
+
+                                </script>
+                                <button onclick="verifyEmail()" type="button" id="verify_email">Verify Email</button>
+                                <p id="verify_email_txt"/>
+
                             </t>
                         </div><br/>
                     </t>

@@ -1,6 +1,7 @@
 from odoo import http
 from odoo.addons.website_sale.controllers.main import WebsiteSale, PaymentPortal
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
+from odoo.addons.auth_signup.models.res_partner import random_token
 
 from odoo.exceptions import ValidationError
 
@@ -22,48 +23,52 @@ class PaymentPortalInherited(PaymentPortal):
         _logger.info(f"DEF22 ============= \n\tkwargs: {kwargs}")
         # \n\nsession: {dict(request.session)}\n\nparams: {request.params}\n")
 
-        user_id = request.env.user
-        if user_id and user_id.id > 4:
-            _logger.info(f"DEF29 user_id: {user_id}")
-
-            verify_email_action = kwargs.get('verify_email_action')
-            if verify_email_action == "send_email":
-                _logger.info(f"DEF33 ==== ")
-                data = {'btn_txt': 'Refresh',
-                        'message': 'Email Sent - Check your Mail',
-                        'verify_email_action': 'refresh'}
-                return data
-            elif verify_email_action == "refresh":
-                _logger.info(f"DEF39 ==== ")
-                if user_id.email_verified == True:
-                    data = {'btn_txt': 'Refresh',
-                            'message': 'Email not verify yet',
-                            'verify_email_action': 'email_verified'}                
-                else:
-                    data = {'btn_txt': 'Refresh',
-                            'message': 'Email not verify yet',
-                            'verify_email_action': 'refresh'}
-                return data
-            elif verify_email_action == "email_verified":
-                data = {'btn_txt': 'OK',
-                        'message': 'Email Verified',
-                        'verify_email_action': 'email_verified'}
-                return data
-            else:
-                _logger.info(f"DEF39 ==== ")
-                return "ffffffffffffffffff"
-            raise ValidationError(f"kwargs: {kwargs} \n\nparams: {request.params} \nsession: {dict(request.session)}\n")
+        if kwargs.get('verify_email_action'):
+            
+            return self._email_verification( **kwargs )
         
-        if request.env.user.email_verified == False and request.env.company.email_verification == True:
-            if request.env.user.id == 4:
-                msg1 = "Error: Need to Sign In"
-            else:
-                msg1 = f"Password expired for: {request.env.user.login}\n\n\tClick the button Reset Password"
-                # \n\nNeed to reset your password" 
-            _logger.info(f"    ==== {msg1} {request.env.user} ")
-            raise ValidationError( msg1) 
-
+        raise ValidationError("WIP")
         return super().shop_payment_transaction(order_id, access_token, **kwargs)
+
+    def _email_verification(self, **kwargs):
+        _logger.info(f"DEF33 ============= \n\tkwargs: {kwargs}")
+        login_email_template_id = request.env.ref('auth_signup.mail_template_user_signup_account_created')
+        if len(login_email_template_id) != 1:
+            raise ValidationError("Login Email Template Not Found")
+        
+        user_id = request.env.user
+        _logger.info(f"DEF36 user_id: {user_id} email_verified: {user_id.email_verified}")
+        
+        email_verified = user_id.email_verified
+        if email_verified == True:
+            _logger.info(f"DEF42 user_id: {user_id}")
+            
+            return {    'email_verified': email_verified,
+                        'btn_txt': 'OK',
+                        'message': 'Email Verified',
+                        'verify_email_action': 'refresh'
+                   }
+        else:
+            pass
+
+        verify_email_action = kwargs.get('verify_email_action')
+        if verify_email_action == "verify_email":
+            _logger.info(f"DEF55 ==== ")
+            
+            user_id.sudo().partner_id.signup_token = random_token()
+            
+            result = login_email_template_id.sudo().send_mail(user_id.id, force_send=True)
+            _logger.info(f"DEF57 result: {result}")
+            data = {'btn_txt': 'Refresh',
+                    'message': f'Email Sent - Check your e-mail: {user_id.login}',
+                    'verify_email_action': 'refresh' }
+        else:
+            _logger.info(f"DEF62 ==== ")
+            data = {'btn_txt': 'Refresh',
+                    'message': f'Email not verified - Check your e-mail: {user_id.login}',
+                    'verify_email_action': 'refresh'}
+        return data
+
 
 
 class WebsiteSaleInherited(WebsiteSale):

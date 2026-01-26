@@ -11,11 +11,11 @@
                     <t t-if="request.env.user.email_verified == False and request.env.company.email_verification == True">
                         <div style="display: flex;">
                             <t t-if="request.env.user.id == 4">
-                                <a t-attf-href="/web/login?redirect=/web/login?redirect=/shop/payment"
-                                    t-attf-class="#{_cta_classes} btn btn-secondary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Sign in</a>
+                                <a t-attf-href="/web/login?redirect=/web/login?redirect=/shop/payment" t-attf-class="#{_cta_classes} btn btn-secondary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Sign in</a>
                             </t>
                             <t t-else="">
                                 <script>
+                                    let observer;
                                     window.addEventListener('load', function () {
                                         console.log("===== Disabling button o_payment_submit_button");
                                 
@@ -27,7 +27,7 @@
                                         // Force initial state
                                         button.disabled = true;
                                 
-                                        const observer = new MutationObserver(() => {
+                                        observer = new MutationObserver(() =&gt; {
                                             if (!button.disabled) {
                                                 console.log("===== Re-disabling payment button");
                                                 button.disabled = true;
@@ -40,8 +40,10 @@
                                         });
                                     });
                                 </script>
-
+                
                                 <script>
+                                    console.log("Loading Web Security");
+                                    
                                     let verify_email_action = "verify_email";
                                     var paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
                                     
@@ -83,7 +85,23 @@
                                             console.log('Success:', result);
                                             const verify_email_btn = document.getElementById('verify_email');
                                             if (verify_email_btn) {
-                                              console.log('Button found:', verify_email_btn);
+                                                console.log('Button found:', verify_email_btn);
+                                                
+                                                const payment_button = document.querySelector(
+                                                    'button[name="o_payment_submit_button"]'
+                                                    );
+                                                
+                                                if (result.result.verify_email_action == 'refresh'){
+                                                    payment_button.disabled = false;
+                                                } else {
+                                                    if (payment_button &amp;&amp; observer){
+                                                        console.log('disable observer ===');
+                                                        disableObserver();
+                                                        payment_button.disabled = false;
+                                                    }                                                
+                                                
+                                                }
+                                                
                                               verify_email_btn.textContent = result.result.btn_txt;
                                               verify_email_txt.textContent = result.result.message;
                                               // You can perform actions on the button here, for example:
@@ -97,18 +115,22 @@
                                           console.error('Error:', error);
                                         });
                                         
-
-
+                
+                
                                     }
-
+                
+                                    function disableObserver() {
+                                        observer.disconnect();
+                                        console.log("Observer has been disabled");
+                                    }
                                 </script>
-                                <button onclick="verifyEmail()" type="button" id="verify_email">Verify Email</button>
+                                <button onclick="verifyEmail()" type="button" id="verify_email" style="width:100%; max-height: 35px;" t-attf-class="#{_cta_classes} btn btn-secondary">Verify Email</button>
                                 <p id="verify_email_txt"/>
-
+                
                             </t>
                         </div><br/>
                     </t>
-              </xpath>
+                </xpath>
     
             </field>
         </record>

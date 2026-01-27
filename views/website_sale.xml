@@ -9,7 +9,8 @@
 
                 <xpath expr="//button[@name='o_payment_submit_button']" position="before">
                     <t t-if="request.env.user.email_verified == False and request.env.company.email_verification == True">
-                        <div style="display: flex;">
+                        <!--<div >-->
+                            <!-- style="display: flex;" -->
                             <t t-if="request.env.user.id == 4">
                                 <a t-attf-href="/web/login?redirect=/web/login?redirect=/shop/payment" t-attf-class="#{_cta_classes} btn btn-secondary #{not website_sale_order._is_cart_ready() and 'disabled'} #{_form_send_navigation and 'order-lg-3 w-100 w-lg-auto ms-lg-auto' or 'w-100'}">Sign in</a>
                             </t>
@@ -98,7 +99,7 @@
                                                         console.log('disable observer ===');
                                                         disableObserver();
                                                         payment_button.disabled = false;
-                                                    }                                                
+                                                    }
                                                 
                                                 }
                                                 
@@ -107,7 +108,7 @@
                                               // You can perform actions on the button here, for example:
                                               // button.style.backgroundColor = 'yellow';
                                               verify_email_action = result.result.verify_email_action
-                                              console.log('verify_email_action:' + verify_email_action);
+                                              console.log('result.result.verify_email_action: ' + verify_email_action);
                                             } 
                                           }
                                         })
@@ -124,11 +125,10 @@
                                         console.log("Observer has been disabled");
                                     }
                                 </script>
-                                <button onclick="verifyEmail()" type="button" id="verify_email" style="width:100%; max-height: 35px;" t-attf-class="#{_cta_classes} btn btn-secondary">Verify Email</button>
-                                <p id="verify_email_txt"/>
+                                    <button onclick="verifyEmail()" type="button" id="verify_email" class="btn btn-secondary position-relative d-flex w-100 justify-content-center align-items-center" >Verify Email</button>
+                                    <p id="verify_email_txt"/>
                 
                             </t>
-                        </div><br/>
                     </t>
                 </xpath>
     

@@ -59,13 +59,18 @@ class PaymentPortalInherited(PaymentPortal):
             
             result = login_email_template_id.sudo().send_mail(user_id.id, force_send=True)
             _logger.info(f"DEF57 result: {result}")
+
+            message = "We sent you a verification link. Please sign into your email and click the link, then return to this page to complete your purchase. You are required to do this only once."
+
             data = {'btn_txt': 'Refresh',
-                    'message': f'Email Sent - Check your e-mail: {user_id.login}',
+                    'message': f'{message}',
                     'verify_email_action': 'refresh' }
         else:
             _logger.info(f"DEF62 ==== ")
+            message = "We sent you a verification link. Please sign into your email and click the link, then return to this page to complete your purchase. You are required to do this only once."
+            
             data = {'btn_txt': 'Refresh',
-                    'message': f'Email not verified - Check your e-mail: {user_id.login}',
+                    'message': f'{message}',
                     'verify_email_action': 'refresh'}
         return data
 

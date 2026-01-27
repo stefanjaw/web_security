@@ -27,7 +27,7 @@ class PaymentPortalInherited(PaymentPortal):
             
             return self._email_verification( **kwargs )
         
-        raise ValidationError("WIP")
+        
         return super().shop_payment_transaction(order_id, access_token, **kwargs)
 
     def _email_verification(self, **kwargs):

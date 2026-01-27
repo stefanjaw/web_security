@@ -18,24 +18,24 @@
                                 <script>
                                     let observer;
                                     window.addEventListener('load', function () {
-                                        console.log("===== Disabling button o_payment_submit_button");
+                                        console.log("===== Observer paymentButton");
                                 
-                                        const button = document.querySelector(
+                                        const paymentButton = document.querySelector(
                                             'button[name="o_payment_submit_button"]'
                                         );
-                                        if (!button) return;
+                                        if (!paymentButton) return;
                                 
                                         // Force initial state
-                                        button.disabled = true;
+                                        paymentButton.disabled = true;
                                 
                                         observer = new MutationObserver(() =&gt; {
-                                            if (!button.disabled) {
-                                                console.log("===== Re-disabling payment button");
-                                                button.disabled = true;
+                                            if (!paymentButton.disabled) {
+                                                console.log("===== Re-disabling paymentButton");
+                                                paymentButton.disabled = true;
                                             }
                                         });
                                         
-                                        observer.observe(button, {
+                                        observer.observe(paymentButton, {
                                             attributes: true,
                                             attributeFilter: ['disabled']
                                         });
@@ -46,10 +46,10 @@
                                     console.log("Loading Web Security");
                                     
                                     let verify_email_action = "verify_email";
-                                    var paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
+                                    let paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
                                     
                                     function verifyEmail() {
-                                        console.log('testing0956');
+                                        console.log('verifyEmail');
                                         
                                         const formElement = document.getElementById('o_payment_form');
                                         const verify_email_txt = document.getElementById('verify_email_txt');
@@ -58,7 +58,6 @@
                                         
                                         const accessToken = formElement.getAttribute('data-access-token');
                                         const csrf_token = odoo.csrf_token;
-                                        console.log("url: " + url + " transactionRoute: " + transactionRoute + " accessToken: " + accessToken + " csrf_token: " + csrf_token);
                                         
                                         let data = {
                                           "id": 4,
@@ -70,7 +69,7 @@
                                             "csrf_token": csrf_token
                                           }
                                         };
-                                        console.log("data to send", data);
+                                        
                                         fetch(url, {
                                           method: 'POST',
                                           headers: {
@@ -80,35 +79,36 @@
                                         })
                                         .then(response =&gt; response.json())
                                         .then(result =&gt; {
+                                          
                                           if (result &amp;&amp; result.result &amp;&amp; result.result.error) {
                                             console.error('Error from server:', result.result.error);
                                           } else {
-                                            console.log('Success:', result);
                                             const verify_email_btn = document.getElementById('verify_email');
                                             if (verify_email_btn) {
-                                                console.log('Button found:', verify_email_btn);
                                                 
-                                                const payment_button = document.querySelector(
-                                                    'button[name="o_payment_submit_button"]'
-                                                    );
-                                                
-                                                if (result.result.verify_email_action == 'refresh'){
-                                                    payment_button.disabled = false;
-                                                } else {
-                                                    if (payment_button &amp;&amp; observer){
-                                                        console.log('disable observer ===');
+                                                if (result.result.email_verified == true){
+                                                    verify_email_btn.classList = []
+                                                    verify_email_btn.style = "display: none;";
+                                                    
+                                                    let paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
+                
+                                                    if (paymentButton &amp;&amp; observer){
                                                         disableObserver();
-                                                        payment_button.disabled = false;
+                                                        disable_payment_button(false);
+                                                        
                                                     }
-                                                
+                                                    disable_payment_button(false);
+                                                } else if (result.result.verify_email_action == 'refresh'){
+                                                    disable_payment_button(true);
+                                                    
+                                                } else {
+                                                    console.log("==> Error no action found");
                                                 }
                                                 
                                               verify_email_btn.textContent = result.result.btn_txt;
                                               verify_email_txt.textContent = result.result.message;
-                                              // You can perform actions on the button here, for example:
-                                              // button.style.backgroundColor = 'yellow';
+                
                                               verify_email_action = result.result.verify_email_action
-                                              console.log('result.result.verify_email_action: ' + verify_email_action);
                                             } 
                                           }
                                         })
@@ -118,6 +118,16 @@
                                         
                 
                 
+                                    }
+                
+                                    function disable_payment_button(disabled){
+                                        const paymentButton = document.querySelector(
+                                            'button[name="o_payment_submit_button"]'
+                                        );
+                                        if (paymentButton){
+                                            console.log("\tdisable_payment_button:", disabled);
+                                            paymentButton.disabled = disabled;
+                                        }
                                     }
                 
                                     function disableObserver() {

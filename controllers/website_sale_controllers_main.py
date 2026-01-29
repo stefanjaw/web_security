@@ -48,13 +48,14 @@ class PaymentPortalInherited(PaymentPortal):
             pass
 
         verify_email_action = kwargs.get('verify_email_action')
+        
         if verify_email_action == "verify_email":
             
             user_id.sudo().partner_id.signup_token = random_token()
             
             result = login_email_template_id.sudo().send_mail(user_id.id, force_send=True)
             
-            message = "We sent you a verification link. Please sign into your email and click the link, then return to this page to complete your purchase. You are required to do this only once."
+            message = f"We emailed you a verification link. Please click the link, then return to this page and hit \"Refresh\" to complete your purchase or call {request.env.company.phone}"
             
             data = {'btn_txt': 'Refresh',
                     'message': f'{message}',

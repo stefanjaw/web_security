@@ -139,9 +139,12 @@ class WebsiteSaleInherited(WebsiteSale):
     
     def checkout_form_validate(self, mode, all_form_values, data):
         _logger.info(f"    ==== checkout_form_validate")
-        
+
         error, error_msg = super().checkout_form_validate(mode, all_form_values, data)
-        if all_form_values.get('password') in ['', False, None]:
+        
+        if all_form_values.get('password') in ['', False, None] \
+        and all_form_values.get('mode') == "billing" \
+        and len(request.env.user) == 0:
             error['password'] = 'missing'
             error_msg.append('Password is required')
         

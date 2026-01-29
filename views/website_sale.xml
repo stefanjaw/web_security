@@ -155,7 +155,7 @@
                         <div t-attf-class="#{error.get('phone') and 'o_has_error'} col-lg-6 mb-2" id="div_password">
                             <label
                                 t-attf-class="col-form-label #{mode[1] == 'shipping' and 'label-optional' or ''}">Password Required*</label>
-                            <input type="password" name="password" t-attf-class="form-control #{error.get('email') and 'is-invalid' or ''}"
+                            <input type="password" name="password" t-attf-class="form-control #{error.get('password') and 'is-invalid' or ''}"
                                 t-att-value="'password' in checkout and checkout['password']"/>
                         </div>
                         <t t-if="request.params.get('error')">

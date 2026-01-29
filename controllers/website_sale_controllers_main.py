@@ -137,15 +137,12 @@ class WebsiteSaleInherited(WebsiteSale):
         
         return super().address(**kw)
     
-    def _get_mandatory_fields_billing(self, country_id=False):
-        _logger.info(f"    ==== _get_mandatory_fields_billing")
-        req = super()._get_mandatory_fields_shipping(country_id=False)
-        req.append('password')
-        return req
-
     def checkout_form_validate(self, mode, all_form_values, data):
         _logger.info(f"    ==== checkout_form_validate")
+        
         error, error_msg = super().checkout_form_validate(mode, all_form_values, data)
-        if error.get('password'):
+        if all_form_values.get('password') in ['', False, None]:
+            error['password'] = 'missing'
             error_msg.append('Password is required')
+        
         return error, error_msg

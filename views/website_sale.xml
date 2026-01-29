@@ -136,7 +136,7 @@
                                     }
                                 </script>
                                     <button onclick="verifyEmail()" type="button" id="verify_email" class="btn btn-secondary position-relative d-flex w-100 justify-content-center align-items-center" >Verify Email</button>
-                                    <p id="verify_email_txt"/>
+                                    <p id="verify_email_txt">Click to verify your email. You have to do it only once. or call <t t-esc="request.env.company.phone"/></p>
                 
                             </t>
                     </t>

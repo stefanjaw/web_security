@@ -67,7 +67,7 @@ class PaymentPortalInherited(PaymentPortal):
                     'verify_email_action': 'refresh' }
         else:
             _logger.info(f"DEF62 ==== ")
-            message = "We sent you a verification link. Please sign into your email and click the link, then return to this page to complete your purchase. You are required to do this only once."
+            message = f"We emailed you a verification link. Please click the link, then return to this page and hit \"Refresh\" to complete your purchase or call {request.env.company.phone}"
             
             data = {'btn_txt': 'Refresh',
                     'message': f'{message}',

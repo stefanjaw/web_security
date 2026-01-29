@@ -20,28 +20,24 @@ class PaymentPortalInherited(PaymentPortal):
         '/shop/payment/transaction/<int:order_id>', type='json', auth='public', website=True
     )    
     def shop_payment_transaction(self, order_id, access_token, **kwargs):
-        _logger.info(f"DEF22 ============= \n\tkwargs: {kwargs}")
-        # \n\nsession: {dict(request.session)}\n\nparams: {request.params}\n")
+        _logger.info(f"    ==== shop_payment_transaction")
         
         if kwargs.get('verify_email_action'):
             
             return self._email_verification( **kwargs )
         
-        
         return super().shop_payment_transaction(order_id, access_token, **kwargs)
 
     def _email_verification(self, **kwargs):
-        _logger.info(f"DEF33 ============= \n\tkwargs: {kwargs}")
+        _logger.info(f"    ==== _email_verification")
         login_email_template_id = request.env.ref('auth_signup.mail_template_user_signup_account_created')
         if len(login_email_template_id) != 1:
             raise ValidationError("Login Email Template Not Found")
         
         user_id = request.env.user
-        _logger.info(f"DEF36 user_id: {user_id} email_verified: {user_id.email_verified}")
         
         email_verified = user_id.email_verified
         if email_verified == True:
-            _logger.info(f"DEF42 user_id: {user_id}")
             
             return {    'email_verified': email_verified,
                         'btn_txt': 'OK',
@@ -53,20 +49,17 @@ class PaymentPortalInherited(PaymentPortal):
 
         verify_email_action = kwargs.get('verify_email_action')
         if verify_email_action == "verify_email":
-            _logger.info(f"DEF55 ==== ")
             
             user_id.sudo().partner_id.signup_token = random_token()
             
             result = login_email_template_id.sudo().send_mail(user_id.id, force_send=True)
-            _logger.info(f"DEF57 result: {result}")
-
+            
             message = "We sent you a verification link. Please sign into your email and click the link, then return to this page to complete your purchase. You are required to do this only once."
-
+            
             data = {'btn_txt': 'Refresh',
                     'message': f'{message}',
                     'verify_email_action': 'refresh' }
         else:
-            _logger.info(f"DEF62 ==== ")
             message = f"We emailed you a verification link. Please click the link, then return to this page and hit \"Refresh\" to complete your purchase or call {request.env.company.phone}"
             
             data = {'btn_txt': 'Refresh',
@@ -74,10 +67,8 @@ class PaymentPortalInherited(PaymentPortal):
                     'verify_email_action': 'refresh'}
         return data
 
-
-
 class WebsiteSaleInherited(WebsiteSale):
-
+    
     @http.route(['/shop/address'], type='http', methods=['GET', 'POST'], auth="public", website=True, sitemap=False)
     def address(self, **kw):
         _logger.info(f"    ==== /shop/address")
@@ -108,7 +99,6 @@ class WebsiteSaleInherited(WebsiteSale):
             kw_filtered = {key: kw.get(key) for key in key_names if key in kw}
             kw_filtered['login'] = email
             kw_filtered['groups_id'] = [(6,0,[group_portal_id.id])]
-
             
             try:
                 user_id = request.env['res.users'].sudo().with_context(no_reset_password=True,create_user=True).create(kw_filtered)
@@ -139,12 +129,17 @@ class WebsiteSaleInherited(WebsiteSale):
     
     def checkout_form_validate(self, mode, all_form_values, data):
         _logger.info(f"    ==== checkout_form_validate")
-
+        
         error, error_msg = super().checkout_form_validate(mode, all_form_values, data)
         
+        if request.env.user.id == 4: #4 public user
+            user_id = []
+        else:
+            user_id = request.env.user
+        
         if all_form_values.get('password') in ['', False, None] \
-        and all_form_values.get('mode') == "billing" \
-        and len(request.env.user) == 0:
+        and "billing" in all_form_values.get('mode') \
+        and len(user_id) == 0:
             error['password'] = 'missing'
             error_msg.append('Password is required')
         

@@ -22,7 +22,7 @@ class PaymentPortalInherited(PaymentPortal):
     def shop_payment_transaction(self, order_id, access_token, **kwargs):
         _logger.info(f"DEF22 ============= \n\tkwargs: {kwargs}")
         # \n\nsession: {dict(request.session)}\n\nparams: {request.params}\n")
-
+        
         if kwargs.get('verify_email_action'):
             
             return self._email_verification( **kwargs )
@@ -81,7 +81,8 @@ class WebsiteSaleInherited(WebsiteSale):
     @http.route(['/shop/address'], type='http', methods=['GET', 'POST'], auth="public", website=True, sitemap=False)
     def address(self, **kw):
         _logger.info(f"    ==== /shop/address")
-        
+
+
         user_int = request.session.uid
         if user_int:
             return super().address(**kw)
@@ -133,7 +134,18 @@ class WebsiteSaleInherited(WebsiteSale):
                 request.params['error'] = kw['error'] = f"{e} \t{email}"
                 
                 return super().address(**kw)
-                
-            _logger.info(f"DEF72 user_id: {user_id}\n")
         
         return super().address(**kw)
+    
+    def _get_mandatory_fields_billing(self, country_id=False):
+        _logger.info(f"    ==== _get_mandatory_fields_billing")
+        req = super()._get_mandatory_fields_shipping(country_id=False)
+        req.append('password')
+        return req
+
+    def checkout_form_validate(self, mode, all_form_values, data):
+        _logger.info(f"    ==== checkout_form_validate")
+        error, error_msg = super().checkout_form_validate(mode, all_form_values, data)
+        if error.get('password'):
+            error_msg.append('Password is required')
+        return error, error_msg

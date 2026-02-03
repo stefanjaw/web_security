@@ -55,13 +55,13 @@ class PaymentPortalInherited(PaymentPortal):
             
             result = login_email_template_id.sudo().send_mail(user_id.id, force_send=True)
             
-            message = f"We emailed you a verification link. Please click the link, then return to this page and hit \"Refresh\" to complete your purchase or call {request.env.company.phone}"
+            message = f"Check your email & click on the provided link to verify your email address. To get help, please call: {request.env.company.phone}"
             
             data = {'btn_txt': 'Refresh',
                     'message': f'{message}',
                     'verify_email_action': 'refresh' }
         else:
-            message = f"We emailed you a verification link. Please click the link, then return to this page and hit \"Refresh\" to complete your purchase or call {request.env.company.phone}"
+            message = f"Check your email & click on the provided link to verify your email address. To get help, please call: {request.env.company.phone}"
             
             data = {'btn_txt': 'Refresh',
                     'message': f'{message}',

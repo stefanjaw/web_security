@@ -47,6 +47,8 @@
                                     
                                     let verify_email_action = "verify_email";
                                     let paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
+                                    const intervalDelay = 5000;
+                                    let intervalId = null;
                                     
                                     function verifyEmail() {
                                         console.log('verifyEmail');
@@ -83,13 +85,17 @@
                                           if (result &amp;&amp; result.result &amp;&amp; result.result.error) {
                                             console.error('Error from server:', result.result.error);
                                           } else {
-                                            const verify_email_btn = document.getElementById('verify_email');
-                                            if (verify_email_btn) {
-                                                
+
+                                            if (document.getElementById('verify_email_txt') ) {
+                                                if (intervalId !== null) {
+                                                    console.log("interval ID:", intervalId);
+                                                } else {
+                                                    intervalId = setInterval(verifyEmail, intervalDelay); 
+                                                }
                                                 if (result.result.email_verified == true){
-                                                    verify_email_btn.classList = []
-                                                    verify_email_btn.style = "display: none;";
-                                                    
+                                                    console.log("email_verified");
+                                                    clearInterval(intervalId);
+
                                                     let paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
                 
                                                     if (paymentButton &amp;&amp; observer){
@@ -99,16 +105,17 @@
                                                     }
                                                     disable_payment_button(false);
                                                 } else if (result.result.verify_email_action == 'refresh'){
+                                                    console.log("Refresh");
+                                                    
                                                     disable_payment_button(true);
                                                     
                                                 } else {
-                                                    console.log("==> Error no action found");
+                                                    console.log("==&gt; Error no action found");
                                                 }
-                                                
-                                              verify_email_btn.textContent = result.result.btn_txt;
-                                              verify_email_txt.textContent = result.result.message;
+                                            
+                                                verify_email_txt.textContent = result.result.message;
                 
-                                              verify_email_action = result.result.verify_email_action
+                                                verify_email_action = result.result.verify_email_action
                                             } 
                                           }
                                         })
@@ -135,9 +142,9 @@
                                         console.log("Observer has been disabled");
                                     }
                                 </script>
-                                    <button onclick="verifyEmail()" type="button" id="verify_email" class="btn btn-secondary position-relative d-flex w-100 justify-content-center align-items-center" >Verify Email</button>
-                                    <p id="verify_email_txt">Click to verify your email. You have to do it only once. or call <t t-esc="request.env.company.phone"/></p>
-                
+                                    <p id="verify_email_txt">
+                                      Check your email &amp; click on the provided link to verify your email address. This is required to complete your purchase. If you did not receive an email, please <a href="#" onclick="verifyEmail(); return false;"><b>click here</b></a> to resend it.
+                                    </p>
                             </t>
                     </t>
                 </xpath>

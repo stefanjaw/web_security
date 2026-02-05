@@ -8,6 +8,7 @@ class ResConfigSettingsInherited(ResConfigSettings):
     _inherit = 'res.config.settings'
     
     email_verification = fields.Boolean(related="company_id.email_verification",readonly=False)
+    email_verification_delay = fields.Integer(related="company_id.email_verification_delay",readonly=False)
     ip_address_verification = fields.Boolean(related="company_id.ip_address_verification",readonly=False)
 
     def open_ip_address_blocked(self):

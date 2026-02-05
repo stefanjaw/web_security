@@ -41,13 +41,13 @@
                                         });
                                     });
                                 </script>
-                
+                                
                                 <script>
                                     console.log("Loading Web Security");
                                     
                                     let verify_email_action = "verify_email";
                                     let paymentButton = document.querySelector('button[name="o_payment_submit_button"]');
-                                    const intervalDelay = 5000;
+                                    let intervalDelay = 5000;
                                     let intervalId = null;
                                     
                                     function verifyEmail() {
@@ -86,6 +86,14 @@
                                             console.error('Error from server:', result.result.error);
                                           } else {
 
+                                            intervalDelay = result.result.email_verification_delay * 1000;
+                                            
+                                            if (intervalId !== null) {
+                                                console.log("Updating interval ID:", intervalId);
+                                                clearInterval(intervalId);
+                                                intervalId = setInterval(verifyEmail, intervalDelay); 
+                                            }
+                                            
                                             if (document.getElementById('verify_email_txt') ) {
                                                 if (intervalId !== null) {
                                                     console.log("interval ID:", intervalId);
@@ -142,9 +150,10 @@
                                         console.log("Observer has been disabled");
                                     }
                                 </script>
-                                    <p id="verify_email_txt">
-                                      Check your email &amp; click on the provided link to verify your email address. This is required to complete your purchase. If you did not receive an email, please <a href="#" onclick="verifyEmail(); return false;"><b>click here</b></a> to resend it.
-                                    </p>
+                                
+                                <p id="verify_email_txt">
+                                  Check your email &amp; click on the provided link to verify your email address. This is required to complete your purchase. If you did not receive an email, please <a href="#" onclick="verifyEmail(); return false;"><b>click here</b></a> to resend it.
+                                </p>
                             </t>
                     </t>
                 </xpath>

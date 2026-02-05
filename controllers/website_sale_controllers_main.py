@@ -59,13 +59,17 @@ class PaymentPortalInherited(PaymentPortal):
             
             data = {'btn_txt': 'Refresh',
                     'message': f'{message}',
-                    'verify_email_action': 'refresh' }
+                    'verify_email_action': 'refresh',
+                    'email_verification_delay': request.env.company.email_verification_delay
+                   }
         else:
             message = f"Check your email & click on the provided link to verify your email address. To get help, please call: {request.env.company.phone}"
             
             data = {'btn_txt': 'Refresh',
                     'message': f'{message}',
-                    'verify_email_action': 'refresh'}
+                    'verify_email_action': 'refresh',
+                    'email_verification_delay': request.env.company.email_verification_delay
+                   }
         return data
 
 class WebsiteSaleInherited(WebsiteSale):

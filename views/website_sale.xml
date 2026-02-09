@@ -181,6 +181,10 @@
                         </t>
                     </t>
                 </xpath>
+
+                <xpath expr="//t[@t-if='website._display_partner_b2b_fields()']/div[@class='w-100']" position="replace">
+                </xpath>
+                
             </field>
         </record>
         

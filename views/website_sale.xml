@@ -151,7 +151,7 @@
                                     }
                                 </script>
                                 
-                                <p id="verify_email_txt">
+                                <p id="verify_email_txt" style="color:red;">
                                   Check your email &amp; click on the provided link to verify your email address. This is required to complete your purchase. If you did not receive an email, please <a href="#" onclick="verifyEmail(); return false;"><b>click here</b></a> to resend it.
                                 </p>
                             </t>

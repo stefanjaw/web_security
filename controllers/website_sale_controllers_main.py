@@ -3,6 +3,8 @@ from odoo.addons.website_sale.controllers.main import WebsiteSale, PaymentPortal
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.addons.auth_signup.models.res_partner import random_token
 
+from datetime import datetime, timedelta
+
 from odoo.exceptions import ValidationError
 
 from odoo.http import request
@@ -23,11 +25,36 @@ class PaymentPortalInherited(PaymentPortal):
         _logger.info(f"    ==== shop_payment_transaction")
         
         if kwargs.get('verify_email_action'):
-            
             return self._email_verification( **kwargs )
+        
+        error_msg = self._user_last_sale_orders_ok( ).get('error')
+        if error_msg:
+            raise ValidationError( error_msg )
         
         return super().shop_payment_transaction(order_id, access_token, **kwargs)
 
+    def _user_last_sale_orders_ok(self):
+        payment_transaction_error_qty = request.env.company.payment_transaction_error_qty
+        
+        payment_transaction_user_blocked_time_min = request.env.company.payment_transaction_user_blocked_time_min
+        
+        error_status = ['draft','pending','cancel','error']
+        user_id = request.env.user
+        from_create_date = datetime.utcnow() - timedelta(minutes=payment_transaction_user_blocked_time_min)
+        
+        payment_transaction_ids_errors = request.env['payment.transaction'].sudo().search([
+            ('partner_id','=', user_id.partner_id.id),
+            ('create_date','>=', from_create_date),
+            ('state','in',error_status)
+        ])
+        
+        result = {}
+        if len(payment_transaction_ids_errors) >= payment_transaction_error_qty:
+            msg1 = f"Your account has been temporarily locked due to multiple failed payment attempts.\nPlease wait at least {payment_transaction_user_blocked_time_min} minute(s) before trying again."
+            result['error'] = msg1
+        
+        return result
+    
     def _email_verification(self, **kwargs):
         _logger.info(f"    ==== _email_verification")
         login_email_template_id = request.env.ref('auth_signup.mail_template_user_signup_account_created')

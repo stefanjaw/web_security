@@ -14,6 +14,8 @@
                         <group>
                             <field name="email_verification"/>
                             <field name="email_verification_delay" string="Email Verification(seconds)"/>
+                            <field name="payment_transaction_error_qty" string="Payment Transaction max errors"/>
+                            <field name="payment_transaction_user_blocked_time_min" string="Payment Transaction User time blocked mins"/>
                             <field name="ip_address_verification" string="IP Address Verification"/>
                             <button type="object" name="open_ip_address_blocked" string="IP Address Blocked"
                                 icon="oi-arrow-right" class="btn-link"/>

@@ -103,13 +103,13 @@ class PaymentPortalInherited(PaymentPortal):
 class WebsiteSaleInherited(WebsiteSale):
     
     @http.route(['/shop/address'], type='http', methods=['GET', 'POST'], auth="public", website=True, sitemap=False)
-    def address(self, **kw):
+    def shop_address(self, **kw):
         _logger.info(f"    ==== /shop/address")
 
 
         user_int = request.session.uid
         if user_int:
-            return super().address(**kw)
+            return super().shop_address(**kw)
         
         user_id = False        
         email = kw.get('email')
@@ -156,9 +156,9 @@ class WebsiteSaleInherited(WebsiteSale):
                 request.params['password'] = kw['password'] = reset_value
                 request.params['error'] = kw['error'] = f"{e} \t{email}"
                 
-                return super().address(**kw)
+                return super().shop_address(**kw)
         
-        return super().address(**kw)
+        return super().shop_address(**kw)
     
     def checkout_form_validate(self, mode, all_form_values, data):
         _logger.info(f"    ==== checkout_form_validate")

@@ -1,5 +1,6 @@
 from odoo import http
-from odoo.addons.website_sale.controllers.main import WebsiteSale, PaymentPortal
+from odoo.addons.website_sale.controllers.main import WebsiteSale
+from odoo.addons.payment.controllers.portal import PaymentPortal # V19
 from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.addons.auth_signup.models.res_partner import random_token
 

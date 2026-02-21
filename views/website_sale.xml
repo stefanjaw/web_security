@@ -164,7 +164,7 @@
         <record id="website_sale_address_inherit_web_security" model="ir.ui.view">
             <field name="name">Address Management Inherit Web Security</field>
             <field name="priority">98</field>
-            <field name="inherit_id" ref="website_sale.address"/>
+            <field name="inherit_id" ref="portal.address_form_fields"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@id='div_phone']" position="before">
                     <t t-if="request.env.user.id in [4,False,'', None]">
@@ -182,8 +182,8 @@
                     </t>
                 </xpath>
 
-                <xpath expr="//t[@t-if='website._display_partner_b2b_fields()']/div[@class='w-100']" position="replace">
-                </xpath>
+                <!-- <xpath expr="//t[@t-if='website._display_partner_b2b_fields()']/div[@class='w-100']" position="replace">
+                </xpath> -->
                 
             </field>
         </record>

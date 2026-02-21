@@ -170,11 +170,10 @@
             <field name="arch" type="xml">
                 <xpath expr="//div[@id='div_phone']" position="before">
                     <t t-if="request.env.user.id in [4,False,'', None]">
-                        <div t-attf-class="#{error.get('phone') and 'o_has_error'} col-lg-6 mb-2" id="div_password">
-                            <label
-                                t-attf-class="col-form-label #{mode[1] == 'shipping' and 'label-optional' or ''}"><span style="color: red;">Create password*</span></label>
-                            <input type="password" name="password" t-attf-class="form-control #{error.get('password') and 'is-invalid' or ''}"
-                                t-att-value="'password' in checkout and checkout['password']"/>
+                        <div id="div_password" class="col-lg-6 mb-2">
+                            <label class="col-form-label" for="o_password">Create password</label>
+                            <input id="password" type="password" name="password"  class="form-control"/>
+                                <!-- t-att-value="'password' in checkout and checkout['password']" -->
                         </div>
                         <t t-if="request.params.get('error')">
                             <div class="alert alert-danger" role="alert">

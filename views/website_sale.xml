@@ -4,6 +4,7 @@
         <record id="payment_submit_button_inherit_web_security" model="ir.ui.view">
             <field name="name">Payment Submit Button Inherit Web Security</field>
             <field name="priority">98</field>
+            <field name="active">true</field>
             <field name="inherit_id" ref="payment.submit_button"/>
             <field name="arch" type="xml">
 
@@ -164,6 +165,7 @@
         <record id="website_sale_address_inherit_web_security" model="ir.ui.view">
             <field name="name">Address Management Inherit Web Security</field>
             <field name="priority">98</field>
+            <field name="active">true</field>
             <field name="inherit_id" ref="portal.address_form_fields"/>
             <field name="arch" type="xml">
                 <xpath expr="//div[@id='div_phone']" position="before">

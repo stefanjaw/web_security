@@ -48,13 +48,13 @@ class ResUsersInherited(models.Model):
         _logger.info(f"    ==== create user generating token")
         
         user_ids = super().create(vals_list)
-        self._set_partner_id_signup_token( user_ids )
+        self._set_partner_id_signup_type( user_ids )
         
         return user_ids
     
-    def _set_partner_id_signup_token(self, user_ids):
+    def _set_partner_id_signup_type(self, user_ids):
         for user_id in user_ids:
-            if user_id.signup_token in [None, False, ""]:
-                signup_token = random_token()
-                user_id.sudo().partner_id.signup_token = signup_token
+            if user_id.signup_type in [None, False, ""]:
+                signup_type = random_token()
+                user_id.sudo().partner_id.signup_type = signup_type
         return

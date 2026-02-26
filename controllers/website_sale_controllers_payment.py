@@ -19,7 +19,7 @@ _logger = logging.getLogger(__name__)
 class PaymentPortalInherited(PaymentPortal):
     
     @route(
-        '/shop/payment/transaction/<int:order_id>', type='json', auth='public', website=True
+        '/shop/payment/transaction/<int:order_id>', type='jsonrpc', auth='public', website=True
     )    
     def shop_payment_transaction(self, order_id, access_token, **kwargs):
         _logger.info(f"    ==== shop_payment_transaction")
@@ -78,7 +78,7 @@ class PaymentPortalInherited(PaymentPortal):
         
         if verify_email_action == "verify_email":
             
-            user_id.sudo().partner_id.signup_token = random_token()
+            user_id.sudo().partner_id.signup_type = random_token()
             
             result = login_email_template_id.sudo().send_mail(user_id.id, force_send=True)
             

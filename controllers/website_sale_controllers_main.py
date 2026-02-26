@@ -19,18 +19,33 @@ _logger = logging.getLogger(__name__)
 
 class WebsiteSaleInherited(WebsiteSale):
     
-    @http.route(['/shop/address'], type='http', methods=['GET', 'POST'], auth="public", website=True, sitemap=False)
-    def shop_address(self, **kw):
-        _logger.info(f"    ==== /shop/address")
-        
+    @route(
+        '/shop/address/submit', type='http', methods=['POST'], auth='public', website=True,
+        sitemap=False
+    )
+    def shop_address_submit( 
+        self,
+        partner_id=None,
+        address_type='billing',
+        use_delivery_as_billing=None,
+        callback=None,
+        **form_data
+    ):
+        _logger.info(f"    ==== shop_address_submit")
         user_int = request.session.uid
         if user_int:
-            return super().shop_address(**kw)
+            return super().shop_address_submit(
+                partner_id,
+                address_type,
+                use_delivery_as_billing,
+                callback,
+                **form_data
+            )
         
         user_id = False        
-        email = kw.get('email')
-        password = kw.get('password')
-        name = kw.get('name')
+        email = form_data.get('email')
+        password = form_data.get('password')
+        name = form_data.get('name')
         
         group_portal_id = request.env.ref('base.group_portal')
         if len(group_portal_id) != 1:
@@ -45,36 +60,47 @@ class WebsiteSaleInherited(WebsiteSale):
             key_names = ['name', 'lastname','email','street','street2','password',
                          'vat','phone','company_name','city','zip','country_id','state_id'
                         ]
-            kw_filtered = {key: kw.get(key) for key in key_names if key in kw}
-            kw_filtered['login'] = email
-            kw_filtered['groups_id'] = [(6,0,[group_portal_id.id])]
-            
+            form_data_filtered = {key: form_data.get(key) for key in key_names if key in form_data}
+            form_data_filtered['login'] = email
+            form_data_filtered['group_ids'] = [(6,0,[group_portal_id.id])]
+            _logger.info(f"DEF73 form_data_filtered: \n\t{form_data_filtered}")
             try:
-                user_id = request.env['res.users'].sudo().with_context(no_reset_password=True,create_user=True).create(kw_filtered)
+                user_id = request.env['res.users'].sudo().with_context(no_reset_password=True,create_user=True).create(form_data_filtered)
                 request.env.cr.commit()
                 _logger.info(f"    ==== Created user_id: {user_id}")
-                
                 result = login_email_template_id.sudo().send_mail(user_id.id, force_send=True)
-                
                 user_int = request.session.authenticate(
-                    request.db,
-                    email,
-                    password
+                    request.env,
+                    {   'login': email,
+                        'password': password,
+                        'type': 'password'
+                    }
                 )
-            
             except Exception as e:
                 _logger.info(f"    ==== Error creating user: {e}")
                 
                 request.env.cr.rollback()
                 
                 reset_value = False
-                request.params['email'] = kw['email'] = reset_value
-                request.params['password'] = kw['password'] = reset_value
-                request.params['error'] = kw['error'] = f"{e} \t{email}"
+                request.params['email'] = form_data['email'] = reset_value
+                request.params['password'] = form_data['password'] = reset_value
+                request.params['error'] = form_data['error'] = f"{e} \t{email}"
                 
-                return super().shop_address(**kw)
+                return super().shop_address_submit(
+                        partner_id,
+                        address_type,
+                        use_delivery_as_billing,
+                        callback,
+                        **form_data
+                    )
         
-        return super().shop_address(**kw)
+        return super().shop_address_submit(
+                    partner_id,
+                    address_type,
+                    use_delivery_as_billing,
+                    callback,
+                    **form_data
+                )
     
     def checkout_form_validate(self, mode, all_form_values, data):
         _logger.info(f"    ==== checkout_form_validate")

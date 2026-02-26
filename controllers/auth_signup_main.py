@@ -23,15 +23,7 @@ class AuthSignupHomeInherited(AuthSignupHome):
         user_id = request.env['res.users'].search([
                 ('login', '=', login)
             ])
-        # signup_token = request.session.session_token
-        # if len(user_id) == 1 and signup_token in [None,False,""]:
-        #     user_id.sudo().partner_id.signup_token = signup_token
         
-        # if len(user_id) == 1 and user_id.email_verified == False:
-        #     # _logger.info(f"DEF25 user_id: {user_id} {user_id.name}")
-        #     # return request.redirect('/web/session/logout?redirect=/web/check_email') # Commented didn't save the guest orders
-        #     return request.redirect('/web/check_email')
-
         return response
 
     def _set_template_body_html_with_token(self):
@@ -45,9 +37,9 @@ class AuthSignupHomeInherited(AuthSignupHome):
             text_new = """<div style="margin: 16px 0px 16px 0px;"><!-- Modified Text -->
             
             <p style="margin:0px 0 16px 0;box-sizing:border-box;">Click the button "Go to My account" or Copy and paste the following URL into your browser:</p>
-            <pre style="margin:0px 0 16px 0;box-sizing:border-box;text-wrap-mode:wrap;white-space-collapse:preserve;color:#111827;overflow-y:auto;overflow-x:auto;unicode-bidi:bidi-override;direction:ltr;font-size:13px;background-color:#f4f4f4; padding:10px; border-radius:5px; font-family: monospace;" t-out="'%sweb/login?auth_login=%s&amp;token=%s' % (request.httprequest.url_root, object.email, object.partner_id.signup_token)"></pre>  
+            <pre style="margin:0px 0 16px 0;box-sizing:border-box;text-wrap-mode:wrap;white-space-collapse:preserve;color:#111827;overflow-y:auto;overflow-x:auto;unicode-bidi:bidi-override;direction:ltr;font-size:13px;background-color:#f4f4f4; padding:10px; border-radius:5px; font-family: monospace;" t-out="'%sweb/login?auth_login=%s&amp;token=%s' % (request.httprequest.url_root, object.email, object.partner_id.signup_type)"></pre>  
             
-                                        <a t-attf-href="/web/login?auth_login={{object.email}}&amp;token={{object.partner_id.signup_token}}" style="box-sizing:border-box;background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                                        <a t-attf-href="/web/login?auth_login={{object.email}}&amp;token={{object.partner_id.signup_type}}" style="box-sizing:border-box;background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
                                             Go to My Account"""
 
             template_body_html = template_id.sudo().body_html
@@ -95,11 +87,11 @@ class AuthSignupHomeInherited(AuthSignupHome):
         ])
         
         if len(user_ids) == 1 and token:
-            if user_ids.partner_id.signup_token == token:
+            if user_ids.partner_id.signup_type == token:
                 _logger.info(f"    ==== web_login Email Verified")
                 user_ids.email_verified = True
                 user_ids.partner_id.write({
-                        "signup_token": False
+                        "signup_type": False
                     })
                 return {'redirect': True}
             else:

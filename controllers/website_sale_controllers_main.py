@@ -85,7 +85,6 @@ class WebsiteSaleInherited(WebsiteSale):
                 request.params['email'] = form_data['email'] = reset_value
                 request.params['password'] = form_data['password'] = reset_value
                 request.params['error'] = form_data['error'] = f"{e} \t{email}"
-                
                 return super().shop_address_submit(
                         partner_id,
                         address_type,

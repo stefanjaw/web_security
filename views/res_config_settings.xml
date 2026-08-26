@@ -1,31 +1,38 @@
 <odoo>
-  <data>
-    
-    <record model="ir.ui.view" id="web_security_res_config_settings_form">
-      <field name="name">res.config.settings.view.form.inherit.web_security</field>
-      <field name="model">res.config.settings</field>
-        <field name="priority">98</field>
-      <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/> 
-      <field name="arch" type="xml">
+    <data>
 
-        <xpath expr="//block[@id='user_default_rights']" position="inside">
-            <setting string="Web Security">
-                <div class="content-group" invisible="not user_default_rights">
-                        <group>
-                            <field name="email_verification"/>
-                            <field name="email_verification_delay" string="Email Verification(seconds)"/>
-                            <field name="payment_transaction_error_qty" string="Payment Transaction max errors"/>
-                            <field name="payment_transaction_user_blocked_time_min" string="Payment Transaction User time blocked mins"/>
-                            <field name="ip_address_verification" string="IP Address Verification"/>
-                            <button type="object" name="open_ip_address_blocked" string="IP Address Blocked"
-                                icon="oi-arrow-right" class="btn-link"/>
-                        </group>
-                </div>
-            </setting>
-        </xpath>
-          
-      </field>
-    </record>
-      
-  </data>
+        <record model="ir.ui.view" id="web_security_res_config_settings_form">
+            <field name="name">res.config.settings.view.form.inherit.web_security</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority">98</field>
+            <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//block[@id='user_default_rights']" position="inside">
+                    <setting string="Web Security">
+                        <div class="content-group">
+                            <group>
+                                <field name="email_verification"/>
+                                <field name="email_verification_delay"
+                                       string="Email Verification(seconds)"/>
+                                <field name="payment_transaction_error_qty"
+                                       string="Payment Transaction max errors"/>
+                                <field name="payment_transaction_user_blocked_time_min"
+                                       string="Payment Transaction User time blocked mins"/>
+                                <field name="ip_address_verification"
+                                       string="IP Address Verification"/>
+                                <button type="object"
+                                        name="open_ip_address_blocked"
+                                        string="IP Address Blocked"
+                                        icon="oi-arrow-right"
+                                        class="btn-link"/>
+                            </group>
+                        </div>
+                    </setting>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
 </odoo>

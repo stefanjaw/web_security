@@ -1,10 +1,10 @@
 {
     'name': "web_security",
-
+    
     'summary': "Short (1 phrase/line) summary of the module's purpose",
 
     'description': """
-Long description of module's purpose
+        Long description of module's purpose
     """,
 
     'author': "Avalantec",
@@ -22,11 +22,11 @@ Long description of module's purpose
     # always loaded
     'data': [
         # 'security/ir.model.access.csv',
-        'views/views.xml',
-        'views/templates.xml',
-        'views/res_users_views.xml',
+        # 'views/views.xml',
+        # 'views/templates.xml',
+        # 'views/res_users_views.xml',
         'views/website_sale.xml',
-        # 'views/res_config_settings.xml'
+        'views/res_config_settings.xml'
     ],
     # only loaded in demonstration mode
     'demo': [
